@@ -15,6 +15,26 @@ public class StringUtils extends org.springframework.util.StringUtils {
         return !StringUtils.isEmpty(str);
     }
 
+    public static String normalizeIdentifier(String value) {
+        if(isNotEmpty(value)) {
+            value = removeAccent(value);
+            value = removeSpace(value);
+
+            return value
+                    .replace(" ", "_")
+                    .toUpperCase();
+        }
+
+        return value;
+    }
+
+    public static String removeSpace(String value) {
+        return value
+                .replaceAll("\\s+", " ")
+                .replaceAll ("^\\s+", "")
+                .replaceAll ("\\s+$", "");
+    }
+
     public static String removeAccent(String str) {
         String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
