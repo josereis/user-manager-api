@@ -6,13 +6,26 @@ import com.josereis.usermanagerapi.shared.exception.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
 import java.time.Instant;
 
 @RestControllerAdvice
 public class ExceptionAdviseHandler {
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({ AuthenticationException.class })
+    public ErrorResponse onAuthenticationException(HttpServletRequest req, AuthenticationException e) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .path(req.getPathInfo())
+                .message("Unauthorized")
+                .timestamp(Instant.now())
+                .build();
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessRuleException.class)

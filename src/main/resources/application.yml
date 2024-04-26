@@ -27,11 +27,13 @@ spring:
     username: ${DB_USER}
     password: ${DB_USER_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
 openapi:
   application-title: User Manager API .
   application-description: API responsible for managing user registration
   application-version: 1.0
   application-termsOfService: "https://"
+
 springdoc:
   writer-with-order-by-keys: true
   swagger-ui:
@@ -39,3 +41,10 @@ springdoc:
     tagsSorter: alpha
     docExpansion: none
     display-request-duration: true
+
+api-security:
+  jwt:
+    token:
+      secret-key: ${SECRET_KEY_FILE}
+      public-key: ${PUBLIC_KEY_FILE}
+      expiration-time: ${EXPIRATION_TIME}
