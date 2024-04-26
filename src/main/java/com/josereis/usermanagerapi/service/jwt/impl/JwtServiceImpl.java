@@ -1,6 +1,6 @@
 package com.josereis.usermanagerapi.service.jwt.impl;
 
-import com.josereis.usermanagerapi.domain.entity.User;
+import com.josereis.usermanagerapi.domain.entity.authentication.UserAuthenticated;
 import com.josereis.usermanagerapi.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,13 +38,13 @@ public class JwtServiceImpl implements JwtService {
                 .stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
-        User user = (User) authentication.getPrincipal();
+        UserAuthenticated userAuthenticated = (UserAuthenticated) authentication.getPrincipal();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(applicationName).issuedAt(issuedAt)
                 .expiresAt(issuedAt.plusMillis(expiration))
                 .subject(authentication.getName())
                 .claim("scope", scopes)
-                .claim("userId", user.getUuid())
+                .claim("userId", userAuthenticated.getUserId())
                 .build();
 
         return this.jwtEncoder
