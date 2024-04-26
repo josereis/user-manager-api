@@ -9,21 +9,39 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
 import java.time.Instant;
 
 @RestControllerAdvice
 public class ExceptionAdviseHandler {
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({ AuthenticationException.class })
+    public ErrorResponse onAuthenticationException(HttpServletRequest req, AuthenticationException e) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .path(req.getPathInfo())
+                .message("Unauthorized")
+                .timestamp(Instant.now())
+                .build();
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessRuleException.class)
     public ErrorResponse onBusinessRuleException(HttpServletRequest req, BusinessRuleException e) {
-        return this.builderError(req.getPathInfo(), 400, e);
+        return this.builderError(req.getPathInfo(), HttpStatus.BAD_REQUEST.value(), e);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public ErrorResponse onNotFoundException(HttpServletRequest req, EntityNotFoundException e) {
-        return this.builderError(req.getPathInfo(), 404, e);
+        return this.builderError(req.getPathInfo(), HttpStatus.NOT_FOUND.value(), e);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ErrorResponse onNotFoundException(HttpServletRequest req, Exception e) {
+        return this.builderError(req.getPathInfo(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e);
     }
 
     private ErrorResponse builderError(String path, Integer statusCode, Exception e) {
