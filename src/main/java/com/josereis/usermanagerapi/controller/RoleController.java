@@ -1,5 +1,6 @@
 package com.josereis.usermanagerapi.controller;
 
+import com.josereis.usermanagerapi.configurarion.security.police.RolePolicy;
 import com.josereis.usermanagerapi.domain.dto.request.RoleRequest;
 import com.josereis.usermanagerapi.domain.dto.response.RoleResponse;
 import com.josereis.usermanagerapi.service.role.RoleService;
@@ -34,6 +35,7 @@ public class RoleController {
         return ResponseEntity.ok().body(this.service.list(name, active, pageable));
     }
 
+    @RolePolicy.canCreate
     @PostMapping
     public ResponseEntity<RoleResponse> create(@RequestBody @Valid RoleRequest request, UriComponentsBuilder uriBuilder) {
         RoleResponse response = this.service.create(request);
@@ -48,6 +50,7 @@ public class RoleController {
         return ResponseEntity.ok().body(this.service.read(uuid));
     }
 
+    @RolePolicy.canUpdate
     @PutMapping("/{uuid}")
     public ResponseEntity<RoleResponse> update(@PathVariable UUID uuid, @RequestBody @Valid RoleRequest request) {
         RoleResponse response = this.service.update(uuid, request);
@@ -55,6 +58,7 @@ public class RoleController {
         return ResponseEntity.accepted().body(response);
     }
 
+    @RolePolicy.canDelete
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> delete(@PathVariable UUID uuid) {
         this.service.delete(uuid);
