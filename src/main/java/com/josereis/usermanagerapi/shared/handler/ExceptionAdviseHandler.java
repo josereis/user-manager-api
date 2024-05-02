@@ -5,6 +5,7 @@ import com.josereis.usermanagerapi.shared.exception.BusinessRuleException;
 import com.josereis.usermanagerapi.shared.exception.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,6 +23,17 @@ public class ExceptionAdviseHandler {
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .path(req.getPathInfo())
                 .message("Unauthorized")
+                .timestamp(Instant.now())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler({ AccessDeniedException.class })
+    public ErrorResponse onAccessDeniedException(HttpServletRequest req, AccessDeniedException e) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .path(req.getPathInfo())
+                .message("Forbidden")
                 .timestamp(Instant.now())
                 .build();
     }

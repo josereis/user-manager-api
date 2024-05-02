@@ -4,6 +4,8 @@ import com.josereis.usermanagerapi.domain.enums.UserSituationEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -28,4 +30,7 @@ public class User extends GenericEntity {
     @Enumerated(EnumType.STRING)
     @Column(length = 50, columnDefinition = "varchar(50) default 'PENDING_ACTIVATION'")
     private UserSituationEnum situation = UserSituationEnum.PENDING_ACTIVATION;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<UserRole> roles;
 }
