@@ -2,6 +2,7 @@ package com.josereis.usermanagerapi.controller;
 
 import com.josereis.usermanagerapi.domain.dto.request.AuthenticationRequest;
 import com.josereis.usermanagerapi.domain.dto.request.UserRequest;
+import com.josereis.usermanagerapi.domain.dto.response.UserAuthenticatedResponse;
 import com.josereis.usermanagerapi.domain.dto.response.UserResponse;
 import com.josereis.usermanagerapi.service.user.AuthenticationService;
 import com.josereis.usermanagerapi.service.user.UserService;
@@ -29,9 +30,9 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> authenticate(@RequestBody @Valid AuthenticationRequest request) {
+    public ResponseEntity<UserAuthenticatedResponse> authenticate(@RequestBody @Valid AuthenticationRequest request) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
-        String token = this.authenticationService.authenticate(this.authenticationManager.authenticate(usernamePassword));
+        UserAuthenticatedResponse token = this.authenticationService.authenticate(this.authenticationManager.authenticate(usernamePassword));
 
         return ResponseEntity.ok().body(token);
     }
