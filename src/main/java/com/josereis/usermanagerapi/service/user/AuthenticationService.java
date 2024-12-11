@@ -1,7 +1,8 @@
 package com.josereis.usermanagerapi.service.user;
 
+import com.josereis.usermanagerapi.domain.dto.response.UserAuthenticatedResponse;
 import org.springframework.security.core.Authentication;
 
 public interface AuthenticationService {
-    String authenticate(Authentication authentication);
+    UserAuthenticatedResponse authenticate(Authentication authentication);
 }

@@ -1,9 +1,10 @@
 package com.josereis.usermanagerapi.service.jwt;
 
+import com.josereis.usermanagerapi.domain.dto.response.UserAuthenticatedResponse;
 import org.springframework.security.core.Authentication;
 
 public interface JwtService {
-    String generateToken(Authentication authentication);
+    UserAuthenticatedResponse generateToken(Authentication authentication);
     Boolean validateToken(String token);
     String getUsername(String token);
 }

@@ -1,5 +1,6 @@
 package com.josereis.usermanagerapi.service.jwt.impl;
 
+import com.josereis.usermanagerapi.domain.dto.response.UserAuthenticatedResponse;
 import com.josereis.usermanagerapi.domain.entity.authentication.UserAuthenticated;
 import com.josereis.usermanagerapi.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class JwtServiceImpl implements JwtService {
     public String applicationName;
 
     @Override
-    public String generateToken(Authentication authentication) {
+    public UserAuthenticatedResponse generateToken(Authentication authentication) {
         Instant issuedAt = Instant.now();
 
         String scopes = authentication.getAuthorities()
@@ -47,9 +48,12 @@ public class JwtServiceImpl implements JwtService {
                 .claim("userId", userAuthenticated.getUserId())
                 .build();
 
-        return this.jwtEncoder
-                .encode(JwtEncoderParameters.from(claims))
-                .getTokenValue();
+        return UserAuthenticatedResponse.builder()
+                .expiration(claims.getExpiresAt().getEpochSecond())
+                .userId(userAuthenticated.getUserId())
+                .userName(userAuthenticated.getUsername())
+                .token(this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue())
+                .build();
     }
 
     @Override
