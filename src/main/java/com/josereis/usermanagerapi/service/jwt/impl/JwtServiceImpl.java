@@ -1,8 +1,11 @@
 package com.josereis.usermanagerapi.service.jwt.impl;
 
 import com.josereis.usermanagerapi.domain.dto.response.UserAuthenticatedResponse;
+import com.josereis.usermanagerapi.domain.entity.User;
 import com.josereis.usermanagerapi.domain.entity.authentication.UserAuthenticated;
+import com.josereis.usermanagerapi.domain.enums.UserSituationEnum;
 import com.josereis.usermanagerapi.service.jwt.JwtService;
+import com.josereis.usermanagerapi.shared.exception.BusinessRuleException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,27 +36,32 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public UserAuthenticatedResponse generateToken(Authentication authentication) {
-        Instant issuedAt = Instant.now();
-
-        String scopes = authentication.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-
         UserAuthenticated userAuthenticated = (UserAuthenticated) authentication.getPrincipal();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(applicationName).issuedAt(issuedAt)
-                .expiresAt(issuedAt.plusMillis(expiration))
-                .subject(authentication.getName())
-                .claim("scope", scopes)
-                .claim("userId", userAuthenticated.getUserId())
-                .build();
+        User user = userAuthenticated.getUser();
+        if(Objects.equals(user.getSituation(), UserSituationEnum.ACTIVE)) {
+            Instant issuedAt = Instant.now();
 
-        return UserAuthenticatedResponse.builder()
-                .expiration(claims.getExpiresAt().getEpochSecond())
-                .userId(userAuthenticated.getUserId())
-                .userName(userAuthenticated.getUsername())
-                .token(this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue())
-                .build();
+            String scopes = authentication.getAuthorities()
+                    .stream().map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(" "));
+
+            JwtClaimsSet claims = JwtClaimsSet.builder()
+                    .issuer(applicationName).issuedAt(issuedAt)
+                    .expiresAt(issuedAt.plusMillis(expiration))
+                    .subject(authentication.getName())
+                    .claim("scope", scopes)
+                    .claim("userId", userAuthenticated.getUserId())
+                    .build();
+
+            return UserAuthenticatedResponse.builder()
+                    .expiration(claims.getExpiresAt().getEpochSecond())
+                    .userId(userAuthenticated.getUserId())
+                    .userName(userAuthenticated.getUsername())
+                    .token(this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue())
+                    .build();
+        } else {
+            throw new BusinessRuleException(String.format("%s", user.getSituation().getDescription()));
+        }
     }
 
     @Override
