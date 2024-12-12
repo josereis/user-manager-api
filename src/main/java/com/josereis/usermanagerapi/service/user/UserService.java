@@ -11,4 +11,5 @@ public interface UserService extends UserDetailsService {
     UserResponse register(UserRequest request);
     UserResponse read(UUID uuid);
     User internalRead(UUID uuid);
+    void confirmRegistration(UUID uuid);
 }

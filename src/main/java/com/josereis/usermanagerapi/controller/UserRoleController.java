@@ -3,6 +3,7 @@ package com.josereis.usermanagerapi.controller;
 import com.josereis.usermanagerapi.configurarion.security.police.UserRolesPolicy;
 import com.josereis.usermanagerapi.domain.dto.response.UserRoleResponse;
 import com.josereis.usermanagerapi.service.userRole.UserRoleService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ import java.util.UUID;
 public class UserRoleController {
 
     private final UserRoleService service;
-
+    @Operation(summary = "List roles associated with a user.")
     @GetMapping
     public ResponseEntity<Page<UserRoleResponse>> list(
             @PathVariable(name = "userId") UUID userId,
@@ -35,6 +36,7 @@ public class UserRoleController {
         return ResponseEntity.ok().body(this.service.list(userId, roleName, pageable));
     }
 
+    @Operation(summary = "Associate role with user.")
     @UserRolesPolicy.canCreate
     @PostMapping
     public ResponseEntity<List<UserRoleResponse>> create(@PathVariable(name = "userId") UUID userId, @RequestBody @Valid List<String> request, UriComponentsBuilder uriBuilder) {
@@ -45,6 +47,7 @@ public class UserRoleController {
         return ResponseEntity.created(uri).body(response);
     }
 
+    @Operation(summary = "Disassociate role from user.")
     @UserRolesPolicy.canDelete
     @DeleteMapping
     public ResponseEntity<Void> delete(@PathVariable(name = "userId") UUID userId, @RequestParam List<UUID> uuids) {

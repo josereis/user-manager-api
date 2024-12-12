@@ -4,6 +4,7 @@ import com.josereis.usermanagerapi.configurarion.security.police.RolePolicy;
 import com.josereis.usermanagerapi.domain.dto.request.RoleRequest;
 import com.josereis.usermanagerapi.domain.dto.response.RoleResponse;
 import com.josereis.usermanagerapi.service.role.RoleService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class RoleController {
 
     private final RoleService service;
 
+    @Operation(summary = "List all registered roles that a user can assume.")
     @GetMapping
     public ResponseEntity<Page<RoleResponse>> list(
             @RequestParam(required = false) String name,
@@ -35,6 +37,7 @@ public class RoleController {
         return ResponseEntity.ok().body(this.service.list(name, active, pageable));
     }
 
+    @Operation(summary = "Registers new role that a user can assume.")
     @RolePolicy.canCreate
     @PostMapping
     public ResponseEntity<RoleResponse> create(@RequestBody @Valid RoleRequest request, UriComponentsBuilder uriBuilder) {
@@ -45,11 +48,13 @@ public class RoleController {
         return ResponseEntity.created(uri).body(response);
     }
 
+    @Operation(summary = "Show role.")
     @GetMapping("/{uuid}")
     public ResponseEntity<RoleResponse> read(@PathVariable UUID uuid) {
         return ResponseEntity.ok().body(this.service.read(uuid));
     }
 
+    @Operation(summary = "Update role.")
     @RolePolicy.canUpdate
     @PutMapping("/{uuid}")
     public ResponseEntity<RoleResponse> update(@PathVariable UUID uuid, @RequestBody @Valid RoleRequest request) {
@@ -58,6 +63,7 @@ public class RoleController {
         return ResponseEntity.accepted().body(response);
     }
 
+    @Operation(summary = "Update role.")
     @RolePolicy.canDelete
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> delete(@PathVariable UUID uuid) {
