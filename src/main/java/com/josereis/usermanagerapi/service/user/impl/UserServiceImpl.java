@@ -4,6 +4,7 @@ import com.josereis.usermanagerapi.domain.dto.request.UserRequest;
 import com.josereis.usermanagerapi.domain.dto.response.UserResponse;
 import com.josereis.usermanagerapi.domain.entity.User;
 import com.josereis.usermanagerapi.domain.entity.authentication.UserAuthenticated;
+import com.josereis.usermanagerapi.domain.enums.UserSituationEnum;
 import com.josereis.usermanagerapi.domain.mappers.UserMapper;
 import com.josereis.usermanagerapi.persistence.repository.UserRepository;
 import com.josereis.usermanagerapi.service.user.UserService;
@@ -57,6 +58,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User internalRead(UUID uuid) {
         return this.checkExistence(uuid);
+    }
+
+    @Override
+    public void confirmRegistration(UUID uuid) {
+        User user = this.checkExistence(uuid);
+        user.setSituation(UserSituationEnum.ACTIVE);
+
+        this.repository.saveAndFlush(user);
     }
 
     @Override

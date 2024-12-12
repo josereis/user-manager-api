@@ -6,6 +6,7 @@ import com.josereis.usermanagerapi.shared.exception.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -59,6 +60,12 @@ public class ExceptionAdviseHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public ErrorResponse onNotFoundException(HttpServletRequest req, EntityNotFoundException e) {
+        return this.builderError(req.getRequestURI(), HttpStatus.NOT_FOUND.value(), e);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(BadCredentialsException.class)
+    public ErrorResponse onNotFoundException(HttpServletRequest req, BadCredentialsException e) {
         return this.builderError(req.getRequestURI(), HttpStatus.NOT_FOUND.value(), e);
     }
 
